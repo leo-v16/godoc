@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -16,7 +17,8 @@ func ConnectDatabase() *pgxpool.Pool {
 	}
 
 	// kill the stmt cache if you want to avoid the collision entirely
-	// cfg.ConnConfig.StatementCacheCapacity = 0
+	cfg.ConnConfig.StatementCacheCapacity = 0
+	cfg.ConnConfig.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
 
 	pool, err := pgxpool.NewWithConfig(context.Background(), cfg)
 	if err != nil {
