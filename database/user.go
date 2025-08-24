@@ -8,11 +8,12 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func CreateUser(conn *pgx.Conn, user *models.User) (int, error) {
+func CreateUser(pool *pgxpool.Pool, user *models.User) (int, error) {
 	var user_id int
-	err := conn.QueryRow(context.Background(),
+	err := pool.QueryRow(context.Background(),
 		"INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id;",
 		user.Username, user.Password).Scan(&user_id)
 
@@ -32,11 +33,11 @@ func CreateUser(conn *pgx.Conn, user *models.User) (int, error) {
 	}
 }
 
-func LogInUser(conn *pgx.Conn, user *models.User) (int, error) {
+func LogInUser(pool *pgxpool.Pool, user *models.User) (int, error) {
 	var password string
 	var user_id int
 
-	err := conn.QueryRow(context.Background(),
+	err := pool.QueryRow(context.Background(),
 		"SELECT password, id FROM users WHERE username = $1",
 		user.Username).Scan(&password, &user_id)
 

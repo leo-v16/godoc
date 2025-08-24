@@ -5,21 +5,29 @@ import (
 	"log"
 	"os"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func ConnectDatabase() *pgx.Conn {
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+func ConnectDatabase() *pgxpool.Pool {
+	dsn := os.Getenv("DATABASE_URL")
+	cfg, err := pgxpool.ParseConfig(dsn)
+	if err != nil {
+		log.Fatalf("Failed to parse DB config: %v", err)
+	}
+
+	// kill the stmt cache if you want to avoid the collision entirely
+	// cfg.ConnConfig.StatementCacheCapacity = 0
+
+	pool, err := pgxpool.NewWithConfig(context.Background(), cfg)
 	if err != nil {
 		log.Fatalf("Failed to connect to the database: %v", err)
 	}
 
-	// Example query to test connection
 	var version string
-	if err := conn.QueryRow(context.Background(), "SELECT version()").Scan(&version); err != nil {
+	if err := pool.QueryRow(context.Background(), "SELECT version()").Scan(&version); err != nil {
 		log.Fatalf("Query failed: %v", err)
 	}
-
 	log.Println("Connected to:", version)
-	return conn
+
+	return pool
 }

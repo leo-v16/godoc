@@ -4,12 +4,12 @@ import (
 	"context"
 	"godoc/models"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func CreateQuery(conn *pgx.Conn, query *models.Query) (int, error) {
+func CreateQuery(pool *pgxpool.Pool, query *models.Query) (int, error) {
 	var query_id int
-	err := conn.QueryRow(context.Background(),
+	err := pool.QueryRow(context.Background(),
 		"INSERT INTO query (user_id, text) VALUES ($1, $2) RETURNING id;",
 		query.UserId, query.Text).Scan(&query_id)
 	if err != nil {
@@ -21,9 +21,9 @@ func CreateQuery(conn *pgx.Conn, query *models.Query) (int, error) {
 	}
 }
 
-func GetAllQuery(conn *pgx.Conn) ([]models.Query, error) {
+func GetAllQuery(pool *pgxpool.Pool) ([]models.Query, error) {
 	var queryArray []models.Query
-	rows, err := conn.Query(context.Background(), "SELECT id, user_id, text FROM query;")
+	rows, err := pool.Query(context.Background(), "SELECT id, user_id, text FROM query;")
 	if err != nil {
 		println("COULD NOT LOAD QUERY | ERROR: ", err.Error())
 		return queryArray, err

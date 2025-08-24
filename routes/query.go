@@ -5,11 +5,11 @@ import (
 	"godoc/models"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func RegisterRouteQuery(router *gin.RouterGroup, conn *pgx.Conn) {
-	db := &DB{CONN: conn}
+func RegisterRouteQuery(router *gin.RouterGroup, pool *pgxpool.Pool) {
+	db := &DB{POOL: pool}
 	router.POST("/create", db.CreateQueryEndPoint)
 	router.GET("/getall", db.GetAllQueryEndPoint)
 }
@@ -24,7 +24,7 @@ func (D *DB) CreateQueryEndPoint(ctx *gin.Context) {
 		return
 	}
 
-	query_id, err := database.CreateQuery(D.CONN, &query)
+	query_id, err := database.CreateQuery(D.POOL, &query)
 	if err != nil {
 		ctx.JSON(500, gin.H{
 			"message": "Query creation failed",
@@ -40,7 +40,7 @@ func (D *DB) CreateQueryEndPoint(ctx *gin.Context) {
 }
 
 func (D *DB) GetAllQueryEndPoint(ctx *gin.Context) {
-	queryArray, err := database.GetAllQuery(D.CONN)
+	queryArray, err := database.GetAllQuery(D.POOL)
 	if err != nil {
 		ctx.JSON(500, gin.H{
 			"message": "Couldn't fetch query",

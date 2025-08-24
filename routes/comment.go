@@ -5,11 +5,12 @@ import (
 	"godoc/models"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5"
+	// "github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func RegisterRouteComment(router *gin.RouterGroup, conn *pgx.Conn) {
-	db := &DB{CONN: conn}
+func RegisterRouteComment(router *gin.RouterGroup, pool *pgxpool.Pool) {
+	db := &DB{POOL: pool}
 	router.POST("/create", db.CreateCommentEndPoint)
 }
 
@@ -22,7 +23,7 @@ func (D *DB) CreateCommentEndPoint(ctx *gin.Context) {
 		})
 	}
 
-	comment_id, err := database.CreateComment(D.CONN, &comment)
+	comment_id, err := database.CreateComment(D.POOL, &comment)
 	if err != nil {
 		ctx.JSON(500, gin.H{
 			"message": "Couldn't create comment",

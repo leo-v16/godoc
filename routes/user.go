@@ -5,11 +5,11 @@ import (
 	"godoc/models"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func RegisterRouteUser(router *gin.RouterGroup, conn *pgx.Conn) {
-	db := &DB{CONN: conn}
+func RegisterRouteUser(router *gin.RouterGroup, pool *pgxpool.Pool) {
+	db := &DB{POOL: pool}
 	router.POST("/signin", db.CreateUserEndPoint)
 	router.POST("/login", db.LogInUserEndPoint)
 }
@@ -25,7 +25,7 @@ func (D *DB) CreateUserEndPoint(ctx *gin.Context) {
 		return
 	}
 
-	user_id, err := database.CreateUser(D.CONN, &user)
+	user_id, err := database.CreateUser(D.POOL, &user)
 	if err != nil {
 		if err.Error() == "duplicate" {
 			ctx.JSON(409, gin.H{
@@ -57,7 +57,7 @@ func (D *DB) LogInUserEndPoint(ctx *gin.Context) {
 		return
 	}
 
-	user_id, err := database.LogInUser(D.CONN, &user)
+	user_id, err := database.LogInUser(D.POOL, &user)
 	if err != nil {
 		if err.Error() == "not found" {
 			ctx.JSON(404, gin.H{

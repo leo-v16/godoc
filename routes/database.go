@@ -1,7 +1,7 @@
 package routes
 
-import "github.com/jackc/pgx/v5"
+import "github.com/jackc/pgx/v5/pgxpool"
 
 type DB struct {
-	CONN *pgx.Conn
+	POOL *pgxpool.Pool
 }
