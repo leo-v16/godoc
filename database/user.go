@@ -11,9 +11,9 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func CreateUser(pool *pgxpool.Pool, user *models.User) (int, error) {
+func CreateUser(ctx context.Context, pool *pgxpool.Pool, user *models.User) (int, error) {
 	var user_id int
-	err := pool.QueryRow(context.Background(),
+	err := pool.QueryRow(ctx,
 		"INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id;",
 		user.Username, user.Password).Scan(&user_id)
 
@@ -33,11 +33,11 @@ func CreateUser(pool *pgxpool.Pool, user *models.User) (int, error) {
 	}
 }
 
-func LogInUser(pool *pgxpool.Pool, user *models.User) (int, error) {
+func LogInUser(ctx context.Context, pool *pgxpool.Pool, user *models.User) (int, error) {
 	var password string
 	var user_id int
 
-	err := pool.QueryRow(context.Background(),
+	err := pool.QueryRow(ctx,
 		"SELECT password, id FROM users WHERE username = $1",
 		user.Username).Scan(&password, &user_id)
 

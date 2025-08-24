@@ -24,7 +24,7 @@ func (D *DB) CreateQueryEndPoint(ctx *gin.Context) {
 		return
 	}
 
-	query_id, err := database.CreateQuery(D.POOL, &query)
+	query_id, err := database.CreateQuery(ctx.Request.Context(), D.POOL, &query)
 	if err != nil {
 		ctx.JSON(500, gin.H{
 			"message": "Query creation failed",
@@ -40,7 +40,7 @@ func (D *DB) CreateQueryEndPoint(ctx *gin.Context) {
 }
 
 func (D *DB) GetAllQueryEndPoint(ctx *gin.Context) {
-	queryArray, err := database.GetAllQuery(D.POOL)
+	queryArray, err := database.GetAllQuery(ctx.Request.Context(), D.POOL)
 	if err != nil {
 		ctx.JSON(500, gin.H{
 			"message": "Couldn't fetch query",

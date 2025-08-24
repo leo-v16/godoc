@@ -25,7 +25,7 @@ func (D *DB) CreateUserEndPoint(ctx *gin.Context) {
 		return
 	}
 
-	user_id, err := database.CreateUser(D.POOL, &user)
+	user_id, err := database.CreateUser(ctx.Request.Context(), D.POOL, &user)
 	if err != nil {
 		if err.Error() == "duplicate" {
 			ctx.JSON(409, gin.H{
@@ -57,7 +57,7 @@ func (D *DB) LogInUserEndPoint(ctx *gin.Context) {
 		return
 	}
 
-	user_id, err := database.LogInUser(D.POOL, &user)
+	user_id, err := database.LogInUser(ctx.Request.Context(), D.POOL, &user)
 	if err != nil {
 		if err.Error() == "not found" {
 			ctx.JSON(404, gin.H{

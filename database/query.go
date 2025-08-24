@@ -7,9 +7,9 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func CreateQuery(pool *pgxpool.Pool, query *models.Query) (int, error) {
+func CreateQuery(ctx context.Context, pool *pgxpool.Pool, query *models.Query) (int, error) {
 	var query_id int
-	err := pool.QueryRow(context.Background(),
+	err := pool.QueryRow(ctx,
 		"INSERT INTO query (user_id, text) VALUES ($1, $2) RETURNING id;",
 		query.UserId, query.Text).Scan(&query_id)
 	if err != nil {
@@ -21,9 +21,9 @@ func CreateQuery(pool *pgxpool.Pool, query *models.Query) (int, error) {
 	}
 }
 
-func GetAllQuery(pool *pgxpool.Pool) ([]models.Query, error) {
+func GetAllQuery(ctx context.Context, pool *pgxpool.Pool) ([]models.Query, error) {
 	var queryArray []models.Query
-	rows, err := pool.Query(context.Background(), "SELECT id, user_id, text FROM query;")
+	rows, err := pool.Query(ctx, "SELECT id, user_id, text FROM query;")
 	if err != nil {
 		println("COULD NOT LOAD QUERY | ERROR: ", err.Error())
 		return queryArray, err

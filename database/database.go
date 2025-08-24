@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -17,16 +16,18 @@ func ConnectDatabase() *pgxpool.Pool {
 	}
 
 	// kill the stmt cache if you want to avoid the collision entirely
-	cfg.ConnConfig.StatementCacheCapacity = 0
-	cfg.ConnConfig.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
+	// cfg.ConnConfig.StatementCacheCapacity = 0
+	// cfg.ConnConfig.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
 
-	pool, err := pgxpool.NewWithConfig(context.Background(), cfg)
+	ctx := context.Background()
+
+	pool, err := pgxpool.NewWithConfig(ctx, cfg)
 	if err != nil {
 		log.Fatalf("Failed to connect to the database: %v", err)
 	}
 
 	var version string
-	if err := pool.QueryRow(context.Background(), "SELECT version()").Scan(&version); err != nil {
+	if err := pool.QueryRow(ctx, "SELECT version()").Scan(&version); err != nil {
 		log.Fatalf("Query failed: %v", err)
 	}
 	log.Println("Connected to:", version)
