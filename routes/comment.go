@@ -11,7 +11,7 @@ import (
 func RegisterRouteComment(router *gin.RouterGroup, pool *pgxpool.Pool) {
 	db := &DB{POOL: pool}
 	router.POST("/create", db.CreateCommentEndPoint)
-	router.POST("/getallofquery")
+	router.POST("/getallofquery", db.GetAllCommentOfQuery)
 }
 
 func (D *DB) CreateCommentEndPoint(ctx *gin.Context) {
