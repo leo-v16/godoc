@@ -26,13 +26,13 @@ func main() {
 		panic(err.Error())
 	}
 
-	conn := database.ConnectDatabase()
-	defer conn.Close()
+	pool := database.ConnectDatabase()
+	defer pool.Close()
 
 	router := gin.Default()
 	user_route := router.Group("/user")
-	routes.RegisterRouteUser(user_route, conn)
-	routes.RegisterRouteQuery(router.Group("/query"), conn)
-	routes.RegisterRouteComment(router.Group("/comment"), conn)
+	routes.RegisterRouteUser(user_route, pool)
+	routes.RegisterRouteQuery(router.Group("/query"), pool)
+	routes.RegisterRouteComment(router.Group("/comment"), pool)
 	router.Run(":8080")
 }
