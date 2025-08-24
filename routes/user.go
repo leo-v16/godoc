@@ -68,7 +68,7 @@ func (D *DB) LogInUserEndPoint(ctx *gin.Context) {
 				"message": "Incorrect password",
 			})
 		} else {
-			ctx.JSON(400, gin.H{
+			ctx.JSON(500, gin.H{
 				"message": "Login failed",
 				"error":   err.Error(),
 			})

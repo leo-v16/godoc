@@ -15,8 +15,6 @@ func ConnectDatabase() *pgxpool.Pool {
 		log.Fatalf("Failed to parse DB config: %v", err)
 	}
 
-	// 🚫 Do NOT disable statement cache unless you absolutely need to.
-	// Leave these lines commented:
 	// cfg.ConnConfig.StatementCacheCapacity = 0
 	// cfg.ConnConfig.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
 
@@ -27,7 +25,6 @@ func ConnectDatabase() *pgxpool.Pool {
 		log.Fatalf("Failed to connect to the database: %v", err)
 	}
 
-	// ✅ Use Ping instead of a statement that might clash
 	if err := pool.Ping(ctx); err != nil {
 		log.Fatalf("Database ping failed: %v", err)
 	}

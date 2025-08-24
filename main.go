@@ -34,5 +34,5 @@ func main() {
 	routes.RegisterRouteUser(user_route, pool)
 	routes.RegisterRouteQuery(router.Group("/query"), pool)
 	routes.RegisterRouteComment(router.Group("/comment"), pool)
-	router.Run(":8080")
+	router.Run()
 }
